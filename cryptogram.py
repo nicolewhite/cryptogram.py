@@ -4,21 +4,26 @@ import string
 
 class Cryptogram():
     def get_quote(self):
+        # Load quotes from text file.
         f = open('quotes.txt', 'r')
         quotes = json.loads(f.read())
+
+        # Get random quote.
         quote = random.choice(quotes)
 
+        # Extract out the quote, author, and category.
         answer = quote['Quote']
         author = quote['Author']
         category = quote['Category']
+
+        # Uppercase the answer and convert to list.
+        answer = answer.upper()
+        answer = list(answer)
 
         return(answer, author, category)
 
     # Build cipher.
     def build_cipher(self, answer):
-        answer = answer.upper()
-        answer = list(answer)
-
         # Get uppercase letters into a list.
         alphabet = list(string.uppercase)
 
