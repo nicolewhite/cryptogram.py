@@ -3,6 +3,7 @@ import json
 import string
 
 class Cryptogram():
+
     def get_quote(self):
         # Load quotes from text file.
         f = open('quotes.txt', 'r')
@@ -20,25 +21,27 @@ class Cryptogram():
         answer = answer.upper()
         answer = list(answer)
 
-        return(answer, author, category)
+        self.answer = answer
+        self.author = author
+        self.category = category
 
     # Build cipher.
-    def build_cipher(self, answer):
+    def build_cipher(self):
         # Get uppercase letters into a list.
         alphabet = list(string.uppercase)
 
         # Get unique letters from original text and location of all occurrences.
         original = []
 
-        for letter in answer:
-            if(letter.isalpha() and letter not in [o['letter'] for o in original]):
-                d = dict()
+        for letter in self.answer:
+            if letter.isalpha() and letter not in [o['letter'] for o in original]:
+                d = {}
                 d['letter'] = letter
-                d['positions'] = [i for i, x in enumerate(answer) if x == letter]
+                d['positions'] = [i for i, x in enumerate(self.answer) if x == letter]
                 original.append(d)
 
         # Copy answer.
-        cipher = list(answer)
+        cipher = list(self.answer)
 
         for o in original:
             # Pick a substitute letter.
@@ -52,21 +55,24 @@ class Cryptogram():
             for i in o['positions']:
                 cipher[i] = sub
 
-        return(cipher)
+        self.cipher = cipher
 
-    def context(self, author, category):
+    def context(self):
         # Show player the author and category.
-        print(str(author) + " on the category '" + str(category) + "'\n")
+        print(str(self.author) + " on the category '" + str(self.category) + "'\n")
 
-    def play(self, cipher, answer):
+    def play(self):
+        cipher = self.cipher
+        answer = self.answer
+
         # Show player the cipher.
-        print("".join(cipher))
+        print(''.join(cipher))
 
         # Keep track of player's progress.
-        progress = list(" " * len(cipher))
+        progress = list(' ' * len(cipher))
 
         for i in range(len(cipher)):
-            if(cipher[i] in string.punctuation):
+            if cipher[i] in string.punctuation:
                 progress[i] = cipher[i]
 
         while True:
@@ -81,18 +87,18 @@ class Cryptogram():
                 continue
 
             # If player sets LHS letter that isn't in the puzzle, move on.
-            if(before not in cipher):
+            if before not in cipher:
                 print("That letter doesn't exist.")
                 continue
 
             # If player sets RHS letter that is already defined, remove previous definition.
-            if(after in progress):
+            if after in progress:
                 for i in [e for e, x in enumerate(progress) if x == after]:
                     progress[i] = ' '
 
             for i in [e for e, x in enumerate(cipher) if x == before]:
                 # If player doesn't supply RHS letter, remove previous guess.
-                if(after == ''):
+                if not after:
                     progress[i] = ' '
                 # Otherwise, substitute their guess.
                 else:
@@ -103,6 +109,7 @@ class Cryptogram():
             print("".join(cipher))
 
             # If the solution has been found, end the game.
-            if(progress == answer):
-                print("Yay you did it!!!")
-                return()
+            if progress == answer:
+                print("\nYay you did it!!!")
+                user_input = raw_input("Play again? Y/N ")
+                return True if user_input == 'Y' else False
