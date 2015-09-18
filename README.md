@@ -6,7 +6,7 @@ A Python game for playing substitution ciphers (cryptograms).
 To play:
 
 ```
-git clone https://github.com/nicolewhite/cryptogram.git cryptogram
+git clone https://github.com/nicolewhite/cryptogram.git
 cd cryptogram
 python play.py
 ```
